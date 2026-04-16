@@ -3,7 +3,7 @@
 ## Group: DANEXT_36
 
 ### Group Members
-- Deepjan Thapaliya
+- Deepjan Thapaliya S395373
 - [Member 2 Name]
 - [Member 3 Name]
 - [Member 4 Name]
