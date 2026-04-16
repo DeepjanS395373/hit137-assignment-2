@@ -235,3 +235,135 @@ def parse(tokens):
         raise ValueError("Unexpected trailing tokens")
 
     return tree
+
+
+def format_tree(node):
+    """Format the expression tree exactly as required."""
+    if node["kind"] == "num":
+        return str(node["value"])
+
+    if node["kind"] == "unary":
+        child_text = format_tree(node["child"])
+        return f"({node['operator']} {child_text})"
+
+    left_text = format_tree(node["left"])
+    right_text = format_tree(node["right"])
+    operator = node["operator"]
+    return f"({operator} {left_text} {right_text})"
+
+
+def evaluate_tree(node):
+    """Evaluate an expression tree."""
+    if node["kind"] == "num":
+        return node["value"]
+
+    if node["kind"] == "unary":
+        child_value = evaluate_tree(node["child"])
+
+        if node["operator"] == "neg":
+            return -child_value
+
+        raise ValueError("Invalid unary operator")
+
+    left_value = evaluate_tree(node["left"])
+    right_value = evaluate_tree(node["right"])
+    operator = node["operator"]
+
+    if operator == "+":
+        return left_value + right_value
+
+    if operator == "-":
+        return left_value - right_value
+
+    if operator == "*":
+        return left_value * right_value
+
+    if operator == "/":
+        if right_value == 0:
+            raise ZeroDivisionError("Division by zero")
+        return left_value / right_value
+
+    raise ValueError("Invalid binary operator")
+
+
+def format_result(value):
+    """Format numeric results as required."""
+    if isinstance(value, float):
+        if value.is_integer():
+            return str(int(value))
+        return f"{value:.4f}"
+
+    return str(value)
+
+
+def process_expression(expression):
+    """Process one expression and return tree, tokens, and result."""
+    stripped = expression.strip()
+
+    try:
+        tokens = tokenize(stripped)
+        tree = parse(tokens)
+        tree_text = format_tree(tree)
+        token_text = format_tokens(tokens)
+
+        try:
+            result_value = evaluate_tree(tree)
+            result_text = format_result(result_value)
+        except ZeroDivisionError:
+            result_text = "ERROR"
+
+        return {
+            "input": stripped,
+            "tree": tree_text,
+            "tokens": token_text,
+            "result": result_text,
+        }
+
+    except ValueError:
+        return {
+            "input": stripped,
+            "tree": "ERROR",
+            "tokens": "ERROR",
+            "result": "ERROR",
+        }
+
+
+def build_output_block(result):
+    """Build one output block."""
+    return "\n".join(
+        [
+            f"Input: {result['input']}",
+            f"Tree: {result['tree']}",
+            f"Tokens: {result['tokens']}",
+            f"Result: {result['result']}",
+        ]
+    )
+
+
+def evaluate_file(input_path):
+    """Evaluate all expressions from the input file."""
+    lines = read_input_file(input_path)
+    results = []
+
+    for line in lines:
+        if line.strip():
+            results.append(process_expression(line))
+
+    return results
+
+
+def main():
+    """Run Question 2."""
+    results = evaluate_file(INPUT_FILE)
+    blocks = []
+
+    for result in results:
+        blocks.append(build_output_block(result))
+
+    final_output = "\n\n".join(blocks)
+    write_output_file(OUTPUT_FILE, final_output)
+    print("Output written successfully.")
+
+
+if __name__ == "__main__":
+    main()
