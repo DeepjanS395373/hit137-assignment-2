@@ -33,3 +33,31 @@ def shift_char(char, shift, base_char):
     offset = ord(char) - ord(base_char)
     new_offset = (offset + shift) % ALPHABET_SIZE
     return chr(ord(base_char) + new_offset)
+
+
+def encrypt_char(char, shift1, shift2):
+    """Encrypt a single character based on assignment rules."""
+
+    if "a" <= char <= "m":
+        return shift_char(char, shift1 * shift2, "a")
+
+    if "n" <= char <= "z":
+        return shift_char(char, -(shift1 + shift2), "a")
+
+    if "A" <= char <= "M":
+        return shift_char(char, -shift1, "A")
+
+    if "N" <= char <= "Z":
+        return shift_char(char, shift2 ** 2, "A")
+
+    return char
+
+
+def encrypt_text(text, shift1, shift2):
+    """Encrypt full text."""
+    result = []
+
+    for char in text:
+        result.append(encrypt_char(char, shift1, shift2))
+
+    return "".join(result)
