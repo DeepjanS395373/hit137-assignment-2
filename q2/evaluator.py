@@ -149,3 +149,89 @@ def format_tokens(tokens):
             parts.append("[END]")
 
     return " ".join(parts)
+
+
+def parse(tokens):
+    """Parse tokens into an expression tree."""
+    position = {"index": 0}
+
+    def current_token():
+        return tokens[position["index"]]
+
+    def eat(expected_type=None, expected_value=None):
+        token = current_token()
+
+        if expected_type and token["type"] != expected_type:
+            raise ValueError("Unexpected token type")
+
+        if expected_value and token["value"] != expected_value:
+            raise ValueError("Unexpected token value")
+
+        position["index"] += 1
+        return token
+
+    def parse_expression():
+        node = parse_term()
+
+        while True:
+            token = current_token()
+
+            if token["type"] == "OP" and token["value"] in ("+", "-"):
+                operator = token["value"]
+                eat("OP")
+                right = parse_term()
+                node = make_binary_node(operator, node, right)
+            else:
+                break
+
+        return node
+
+    def parse_term():
+        node = parse_factor()
+
+        while True:
+            token = current_token()
+
+            if token["type"] == "OP" and token["value"] in ("*", "/"):
+                operator = token["value"]
+                eat("OP")
+                right = parse_factor()
+                node = make_binary_node(operator, node, right)
+            else:
+                break
+
+        return node
+
+    def parse_factor():
+        token = current_token()
+
+        # Unary minus
+        if token["type"] == "OP" and token["value"] == "-":
+            eat("OP")
+            child = parse_factor()
+            return make_unary_node("neg", child)
+
+        # Unary plus → ERROR
+        if token["type"] == "OP" and token["value"] == "+":
+            raise ValueError("Unary plus not allowed")
+
+        # Number
+        if token["type"] == "NUM":
+            eat("NUM")
+            return make_number_node(token["value"])
+
+        # Parentheses
+        if token["type"] == "LPAREN":
+            eat("LPAREN")
+            node = parse_expression()
+            eat("RPAREN")
+            return node
+
+        raise ValueError("Invalid expression")
+
+    tree = parse_expression()
+
+    if current_token()["type"] != "END":
+        raise ValueError("Unexpected trailing tokens")
+
+    return tree
