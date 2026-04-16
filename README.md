@@ -3,10 +3,10 @@
 ## Group: DANEXT_36
 
 ### Group Members
-- Deepjan Thapaliya S395373
-- [Member 2 Name]
-- [Member 3 Name]
-- [Member 4 Name]
+- S395373 - Deepjan Thapaliya
+- S395743 - Sehajpreet Singh
+- S393520 - Manjil Sahani Chhetri
+- S393984 - Kavya Sethi
 
 ---
 
