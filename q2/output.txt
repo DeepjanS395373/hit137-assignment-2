@@ -32,3 +32,33 @@ Input: 1 / 0
 Tree: (/ 1 0)
 Tokens: [NUM:1] [OP:/] [NUM:0] [END]
 Result: ERROR
+
+Input: 3.5 + 2.25
+Tree: (+ 3.5 2.25)
+Tokens: [NUM:3.5] [OP:+] [NUM:2.25] [END]
+Result: 5.75
+
+Input: 10 / 4
+Tree: (/ 10 4)
+Tokens: [NUM:10] [OP:/] [NUM:4] [END]
+Result: 2.5
+
+Input: 2(3 + 4)
+Tree: (* 2 (+ 3 4))
+Tokens: [NUM:2] [OP:*] [LPAREN:(] [NUM:3] [OP:+] [NUM:4] [RPAREN:)] [END]
+Result: 14
+
+Input: (1 + 2)(3 + 4)
+Tree: (* (+ 1 2) (+ 3 4))
+Tokens: [LPAREN:(] [NUM:1] [OP:+] [NUM:2] [RPAREN:)] [OP:*] [LPAREN:(] [NUM:3] [OP:+] [NUM:4] [RPAREN:)] [END]
+Result: 21
+
+Input: +5
+Tree: ERROR
+Tokens: ERROR
+Result: ERROR
+
+Input: 3..5 + 1
+Tree: ERROR
+Tokens: ERROR
+Result: ERROR
